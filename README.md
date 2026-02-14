@@ -1,7 +1,7 @@
 # Reminders MCP Server
 
 > [!CAUTION]
-> This project was generated autonomously by a large language model (LLM), without human review.
+> This project was generated autonomously by a large language model (LLM), with partial human review.
 
 A Model Context Protocol (MCP) server for controlling macOS Reminders via EventKit. This server enables AI assistants and automation tools to create, read, update, and delete reminders and lists programmatically without automating the Reminders UI app.
 
@@ -243,11 +243,11 @@ Human-readable format with visual structure:
 
 ### Work (2)
 
-**Submit report** 
+**Submit report**
   Complete quarterly analysis
   _Due: 3/31/2024, 5:00 PM • Priority: High (9) • List: Work_
 
-**Team meeting** 
+**Team meeting**
   _Due: 3/15/2024, 2:00 PM • Priority: Medium (5) • List: Work_
 ```
 
