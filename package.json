@@ -17,7 +17,7 @@
     "eventkit",
     "automation"
   ],
-  "author": "",
+  "author": "thegeneralist01",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
