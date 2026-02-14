@@ -55,6 +55,7 @@ Error Handling:
         readOnlyHint: false,
         destructiveHint: false,
         idempotentHint: false,
+        // Search is limited to local Apple Reminders data and does not access external resources.
         openWorldHint: false
       }
     },
@@ -145,6 +146,7 @@ Error Handling:
         readOnlyHint: true,
         destructiveHint: false,
         idempotentHint: true,
+        // This tool only searches local Reminders data and does not access external resources.
         openWorldHint: false
       }
     },
@@ -242,6 +244,7 @@ Error Handling:
         readOnlyHint: false,
         destructiveHint: false,
         idempotentHint: true,
+        // This tool only searches local Reminders data and does not access external resources.
         openWorldHint: false
       }
     },
@@ -377,7 +380,8 @@ Error Handling:
         readOnlyHint: true,
         destructiveHint: false,
         idempotentHint: true,
-        openWorldHint: true
+        // This tool only searches local Reminders data and does not access external resources.
+        openWorldHint: false
       }
     },
     async (params: z.infer<typeof SearchRemindersSchema>) => {
