@@ -3,7 +3,7 @@
 /**
  * Reminders MCP Server
  * 
- * An MCP server for controlling macOS Reminders app via AppleScript.
+ * An MCP server for controlling macOS Reminders via EventKit.
  * Provides tools for creating, reading, updating, and deleting reminders and lists.
  */
 

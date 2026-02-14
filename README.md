@@ -1,6 +1,6 @@
 # Reminders MCP Server
 
-A Model Context Protocol (MCP) server for controlling macOS Reminders app via AppleScript. This server enables AI assistants and automation tools to create, read, update, and delete reminders and lists programmatically.
+A Model Context Protocol (MCP) server for controlling macOS Reminders via EventKit. This server enables AI assistants and automation tools to create, read, update, and delete reminders and lists programmatically without automating the Reminders UI app.
 
 ## Features
 
@@ -15,9 +15,9 @@ A Model Context Protocol (MCP) server for controlling macOS Reminders app via Ap
 
 ## Prerequisites
 
-- macOS (for Reminders app and AppleScript)
+- macOS (for Reminders / EventKit)
 - Node.js 18+ and npm
-- Reminders app installed and accessible
+- Swift toolchain available (`xcrun swiftc`) for building the helper binary
 
 ## Installation
 
@@ -276,7 +276,7 @@ All tools include comprehensive error handling:
 - **Invalid dates**: "Invalid date: ..."
 - **Missing lists**: "List 'xyz' not found"
 - **Missing reminders**: "Reminder not found in specified list"
-- **Permission issues**: "AppleScript execution failed: ..."
+- **Permission issues**: "Reminders access denied..."
 
 Errors include helpful tips for resolution.
 
@@ -292,11 +292,13 @@ reminders-mcp-server/
 │   ├── schemas/
 │   │   └── index.ts          # Zod validation schemas
 │   ├── services/
-│   │   ├── applescript.ts    # AppleScript interactions
+│   │   ├── eventkit.ts       # EventKit helper adapter
 │   │   └── formatting.ts     # Output formatting
 │   └── tools/
 │       ├── reminders.ts      # Reminder tools
 │       └── lists.ts          # List tools
+├── native/
+│   └── RemindersEventKitHelper.swift  # Native helper implementation
 ├── dist/                     # Compiled JavaScript
 ├── package.json
 ├── tsconfig.json
@@ -319,25 +321,24 @@ npm start
 ```bash
 # Test with MCP Inspector
 npx @modelcontextprotocol/inspector node dist/index.js
-
-# Manual AppleScript test
-osascript -e 'tell application "Reminders" to get name of every list'
 ```
 
 ## Limitations
 
 - **macOS Only**: Requires macOS and the Reminders app
-- **AppleScript Permissions**: May require granting automation permissions
+- **Calendars Permission Required**: The running process must have full Reminders/Calendars access
+- **No UI Automation**: Uses EventKit directly (does not rely on AppleScript app automation)
 - **Local Only**: Must run on the same machine as Reminders app
 - **List Identification**: Identifies reminders by name within lists (not by ID)
-- **Tags**: AppleScript doesn't support Reminders tags directly
+- **Tags/Subtasks**: Not exposed by this server yet
 
 ## Troubleshooting
 
 ### Permission Errors
-Grant automation permissions:
-1. Open System Settings → Privacy & Security → Automation
-2. Enable permissions for Terminal/Node/your client app to control Reminders
+Grant Reminders access:
+1. Open System Settings → Privacy & Security → Calendars
+2. Enable access for Terminal/Node/your MCP client process
+3. Restart the MCP process after changing permissions
 
 ### "List not found"
 - Verify list name is exact (case-sensitive)
@@ -347,10 +348,10 @@ Grant automation permissions:
 - Ensure dates are in ISO 8601 format
 - Example: `"2024-12-31T15:00:00"` not `"12/31/2024 3pm"`
 
-### AppleScript Execution Failed
-- Check Reminders app is installed and working
-- Try running a simple AppleScript manually to test permissions
-- Restart Terminal/Node if permissions were just granted
+### EventKit Errors
+- Ensure the process has full Calendars permission
+- Restart the MCP host app after permission changes
+- Run `npm run build` and restart the server to refresh the helper binary
 
 ## License
 

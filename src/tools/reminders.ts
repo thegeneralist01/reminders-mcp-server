@@ -10,7 +10,7 @@ import {
   DeleteReminderSchema,
   SearchRemindersSchema
 } from "../schemas/index.js";
-import * as applescript from "../services/applescript.js";
+import * as remindersService from "../services/eventkit.js";
 import { formatRemindersMarkdown } from "../services/formatting.js";
 import { ResponseFormat } from "../types.js";
 import type { z } from "zod";
@@ -60,7 +60,7 @@ Error Handling:
     },
     async (params: z.infer<typeof CreateReminderSchema>) => {
       try {
-        const id = await applescript.createReminder({
+        const id = await remindersService.createReminder({
           name: params.name,
           listName: params.listName,
           body: params.body,
@@ -150,13 +150,16 @@ Error Handling:
     },
     async (params: z.infer<typeof ListRemindersSchema>) => {
       try {
-        const allReminders = await applescript.getReminders({
+        const paged = await remindersService.getPaginatedReminders({
           listName: params.listName,
-          completed: params.completed
+          completed: params.completed,
+          limit: params.limit,
+          offset: params.offset
         });
 
-        const total = allReminders.length;
-        const paginatedReminders = allReminders.slice(params.offset, params.offset + params.limit);
+        const total = paged.total;
+        const paginatedReminders = paged.reminders;
+
         const hasMore = params.offset + params.limit < total;
 
         const output = {
@@ -244,7 +247,7 @@ Error Handling:
     },
     async (params: z.infer<typeof UpdateReminderSchema>) => {
       try {
-        await applescript.updateReminder({
+        await remindersService.updateReminder({
           listName: params.listName,
           reminderName: params.reminderName,
           newName: params.newName,
@@ -321,7 +324,7 @@ Error Handling:
     },
     async (params: z.infer<typeof DeleteReminderSchema>) => {
       try {
-        await applescript.deleteReminder(params.listName, params.reminderName);
+        await remindersService.deleteReminder(params.listName, params.reminderName);
 
         const text = `✓ Deleted reminder: **${params.reminderName}** from list **${params.listName}**`;
         return {
@@ -379,7 +382,7 @@ Error Handling:
     },
     async (params: z.infer<typeof SearchRemindersSchema>) => {
       try {
-        const allReminders = await applescript.getReminders({
+        const allReminders = await remindersService.getReminders({
           listName: params.listName,
           completed: params.completed
         });

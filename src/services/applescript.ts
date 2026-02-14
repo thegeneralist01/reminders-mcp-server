@@ -154,8 +154,12 @@ export async function createReminder(params: {
 export async function getReminders(params: {
   listName?: string;
   completed?: boolean;
+  limit?: number;
+  offset?: number;
 }): Promise<Reminder[]> {
-  const { listName, completed } = params;
+  const { listName, completed, limit, offset } = params;
+  const safeOffset = Math.max(0, Math.floor(offset ?? 0));
+  const safeLimit = limit === undefined ? -1 : Math.max(1, Math.floor(limit));
   
   let script: string;
   
@@ -165,36 +169,14 @@ export async function getReminders(params: {
         set myList to list "${escapeAppleScriptString(listName)}"
         set allReminders to reminders of myList
         set output to ""
+        set matchedCount to 0
+        set collectedCount to 0
+        set offsetCount to ${safeOffset}
+        set limitCount to ${safeLimit}
         repeat with r in allReminders
           ${completed !== undefined ? `if completed of r is ${completed} then` : ""}
-            set output to output & id of r & "||" & name of r & "||" & completed of r & "||"
-            try
-              set output to output & body of r
-            on error
-              set output to output & ""
-            end try
-            set output to output & "||"
-            try
-              set output to output & due date of r
-            on error
-              set output to output & ""
-            end try
-            set output to output & "||" & priority of r & "||" & "${escapeAppleScriptString(listName)}" & "\\n"
-          ${completed !== undefined ? "end if" : ""}
-        end repeat
-        return output
-      end tell
-    `;
-  } else {
-    script = `
-      tell application "Reminders"
-        set allLists to every list
-        set output to ""
-        repeat with myList in allLists
-          set listName to name of myList
-          set allReminders to reminders of myList
-          repeat with r in allReminders
-            ${completed !== undefined ? `if completed of r is ${completed} then` : ""}
+            set matchedCount to matchedCount + 1
+            if matchedCount > offsetCount then
               set output to output & id of r & "||" & name of r & "||" & completed of r & "||"
               try
                 set output to output & body of r
@@ -207,9 +189,58 @@ export async function getReminders(params: {
               on error
                 set output to output & ""
               end try
-              set output to output & "||" & priority of r & "||" & listName & "\\n"
+              set output to output & "||" & priority of r & "||" & "${escapeAppleScriptString(listName)}" & "\\n"
+              set collectedCount to collectedCount + 1
+              if limitCount > 0 and collectedCount >= limitCount then
+                exit repeat
+              end if
+            end if
+          ${completed !== undefined ? "end if" : ""}
+        end repeat
+        return output
+      end tell
+    `;
+  } else {
+    script = `
+      tell application "Reminders"
+        set allLists to every list
+        set output to ""
+        set matchedCount to 0
+        set collectedCount to 0
+        set offsetCount to ${safeOffset}
+        set limitCount to ${safeLimit}
+        set shouldStop to false
+        repeat with myList in allLists
+          set listName to name of myList
+          set allReminders to reminders of myList
+          repeat with r in allReminders
+            ${completed !== undefined ? `if completed of r is ${completed} then` : ""}
+              set matchedCount to matchedCount + 1
+              if matchedCount > offsetCount then
+                set output to output & id of r & "||" & name of r & "||" & completed of r & "||"
+                try
+                  set output to output & body of r
+                on error
+                  set output to output & ""
+                end try
+                set output to output & "||"
+                try
+                  set output to output & due date of r
+                on error
+                  set output to output & ""
+                end try
+                set output to output & "||" & priority of r & "||" & listName & "\\n"
+                set collectedCount to collectedCount + 1
+                if limitCount > 0 and collectedCount >= limitCount then
+                  set shouldStop to true
+                  exit repeat
+                end if
+              end if
             ${completed !== undefined ? "end if" : ""}
           end repeat
+          if shouldStop then
+            exit repeat
+          end if
         end repeat
         return output
       end tell
@@ -233,6 +264,70 @@ export async function getReminders(params: {
       modificationDate: new Date()
     };
   });
+}
+
+/**
+ * Get count of reminders with optional filters
+ */
+export async function getReminderCount(params: {
+  listName?: string;
+  completed?: boolean;
+}): Promise<number> {
+  const { listName, completed } = params;
+
+  let script: string;
+
+  if (listName) {
+    if (completed === undefined) {
+      script = `
+        tell application "Reminders"
+          set myList to list "${escapeAppleScriptString(listName)}"
+          return (count of reminders of myList) as string
+        end tell
+      `;
+    } else {
+      script = `
+        tell application "Reminders"
+          set myList to list "${escapeAppleScriptString(listName)}"
+          set matchingCount to 0
+          repeat with r in reminders of myList
+            if completed of r is ${completed} then
+              set matchingCount to matchingCount + 1
+            end if
+          end repeat
+          return matchingCount as string
+        end tell
+      `;
+    }
+  } else if (completed === undefined) {
+    script = `
+      tell application "Reminders"
+        set totalCount to 0
+        repeat with myList in every list
+          set totalCount to totalCount + (count of reminders of myList)
+        end repeat
+        return totalCount as string
+      end tell
+    `;
+  } else {
+    script = `
+      tell application "Reminders"
+        set matchingCount to 0
+        repeat with myList in every list
+          repeat with r in reminders of myList
+            if completed of r is ${completed} then
+              set matchingCount to matchingCount + 1
+            end if
+          end repeat
+        end repeat
+        return matchingCount as string
+      end tell
+    `;
+  }
+
+  const result = await runAppleScript(script);
+  const count = parseInt(result, 10);
+  return Number.isNaN(count) ? 0 : count;
 }
 
 /**

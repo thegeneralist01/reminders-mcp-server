@@ -1,7 +1,7 @@
 {
   "name": "reminders-mcp-server",
   "version": "1.0.0",
-  "description": "MCP server for controlling macOS Reminders app via AppleScript",
+  "description": "MCP server for controlling macOS Reminders via EventKit",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "mcp",
     "reminders",
     "macos",
-    "applescript",
+    "eventkit",
     "automation"
   ],
   "author": "",

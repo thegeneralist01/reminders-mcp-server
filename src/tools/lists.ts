@@ -8,7 +8,7 @@ import {
   CreateListSchema,
   DeleteListSchema
 } from "../schemas/index.js";
-import * as applescript from "../services/applescript.js";
+import * as remindersService from "../services/eventkit.js";
 import { formatListsMarkdown } from "../services/formatting.js";
 import { ResponseFormat } from "../types.js";
 import type { z } from "zod";
@@ -56,7 +56,7 @@ Error Handling:
     },
     async (params: z.infer<typeof ListListsSchema>) => {
       try {
-        const lists = await applescript.getLists();
+        const lists = await remindersService.getLists();
 
         const output = {
           total: lists.length,
@@ -127,7 +127,7 @@ Error Handling:
     },
     async (params: z.infer<typeof CreateListSchema>) => {
       try {
-        const id = await applescript.createList(params.name);
+        const id = await remindersService.createList(params.name);
 
         const output = {
           success: true,
@@ -192,7 +192,7 @@ Error Handling:
     },
     async (params: z.infer<typeof DeleteListSchema>) => {
       try {
-        await applescript.deleteList(params.name);
+        await remindersService.deleteList(params.name);
 
         const text = `✓ Deleted list: **${params.name}**\n\n⚠️ All reminders in this list have been permanently removed.`;
         return {
