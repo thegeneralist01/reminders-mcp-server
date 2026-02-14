@@ -1,0 +1,24 @@
+{
+  "dxt_version": "0.1",
+  "name": "reminders-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for controlling macOS Reminders via EventKit.",
+  "author": {
+    "name": "thegeneralist01"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "dist/index.js"
+      ]
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "darwin"
+    ]
+  }
+}
