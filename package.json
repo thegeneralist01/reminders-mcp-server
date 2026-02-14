@@ -8,7 +8,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "package:mcpb": "./scripts/package-mcpb.sh"
   },
   "keywords": [
     "mcp",
@@ -17,7 +18,11 @@
     "eventkit",
     "automation"
   ],
-  "author": "thegeneralist01",
+  "author": {
+    "name": "thegeneralist01",
+    "email": "thegeneralist01@gmail.com",
+    "url": "https://github.com/thegeneralist01"
+  },
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",

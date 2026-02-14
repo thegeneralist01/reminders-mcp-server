@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "description": "MCP server for controlling macOS Reminders via EventKit.",
   "author": {
-    "name": "thegeneralist01"
+    "name": "thegeneralist01",
+    "email": "thegeneralist01@gmail.com",
+    "url": "https://github.com/thegeneralist01"
   },
   "server": {
     "type": "node",
