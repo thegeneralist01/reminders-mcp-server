@@ -39,7 +39,13 @@ export const CreateReminderSchema = z.object({
   responseFormat: z.nativeEnum(ResponseFormat)
     .default(ResponseFormat.MARKDOWN)
     .describe("Output format: 'markdown' for human-readable or 'json' for machine-readable")
-}).strict();
+}).strict().refine(
+  value => !(value.dueDate && value.allDayDueDate),
+  {
+    message: "Provide either dueDate or allDayDueDate, not both",
+    path: ["allDayDueDate"]
+  }
+);
 
 /**
  * Schema for listing reminders
@@ -106,7 +112,13 @@ export const UpdateReminderSchema = z.object({
   responseFormat: z.nativeEnum(ResponseFormat)
     .default(ResponseFormat.MARKDOWN)
     .describe("Output format: 'markdown' for human-readable or 'json' for machine-readable")
-}).strict();
+}).strict().refine(
+  value => !(value.dueDate && value.allDayDueDate),
+  {
+    message: "Provide either dueDate or allDayDueDate, not both",
+    path: ["allDayDueDate"]
+  }
+);
 
 /**
  * Schema for deleting a reminder
