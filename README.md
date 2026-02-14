@@ -56,6 +56,21 @@ Test your server interactively:
 npx @modelcontextprotocol/inspector node dist/index.js
 ```
 
+### Build a Claude Desktop `.mcpb` package
+
+If `@anthropic-ai/dxt` emits a `.dxt` file on your machine, you can generate the `.mcpb` upload artifact with:
+
+```bash
+npm run package:mcpb
+```
+
+This script:
+1. Builds TypeScript (`npm run build`)
+2. Runs Anthropic packaging (`npx @anthropic-ai/dxt pack`)
+3. Copies the produced `.dxt` to an equivalent `.mcpb` file in the project root
+
+Then upload the generated `.mcpb` file in the submission form.
+
 ### Integration with Claude Desktop
 
 Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/claude_desktop_config.json`):
