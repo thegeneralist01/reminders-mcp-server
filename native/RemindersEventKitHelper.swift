@@ -113,6 +113,22 @@ let isoFormatterWithoutFractionalSeconds: ISO8601DateFormatter = {
   return formatter
 }()
 
+let localDateTimeFormatterWithSeconds: DateFormatter = {
+  let formatter = DateFormatter()
+  formatter.locale = Locale(identifier: "en_US_POSIX")
+  formatter.timeZone = TimeZone.current
+  formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+  return formatter
+}()
+
+let localDateTimeFormatterWithoutSeconds: DateFormatter = {
+  let formatter = DateFormatter()
+  formatter.locale = Locale(identifier: "en_US_POSIX")
+  formatter.timeZone = TimeZone.current
+  formatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+  return formatter
+}()
+
 let allDayDateFormatter: DateFormatter = {
   let formatter = DateFormatter()
   formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -142,6 +158,12 @@ func parseISODate(_ value: String) -> Date? {
     return parsed
   }
   if let parsed = isoFormatterWithoutFractionalSeconds.date(from: value) {
+    return parsed
+  }
+  if let parsed = localDateTimeFormatterWithSeconds.date(from: value) {
+    return parsed
+  }
+  if let parsed = localDateTimeFormatterWithoutSeconds.date(from: value) {
     return parsed
   }
   return nil
