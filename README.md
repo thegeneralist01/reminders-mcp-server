@@ -16,6 +16,22 @@ A Model Context Protocol (MCP) server for controlling macOS Reminders via EventK
 - 🎨 **Dual Formats**: Output in human-readable Markdown or machine-readable JSON
 - 🔒 **Type-Safe**: Built with TypeScript and Zod validation
 
+## Directory Policy & Trust Information
+
+This repository includes explicit documentation to align with the Anthropic Software Directory Policy:
+
+- Privacy policy: [`PRIVACY.md`](./PRIVACY.md)
+- Compliance mapping: [`DIRECTORY_COMPLIANCE.md`](./DIRECTORY_COMPLIANCE.md)
+- Support channel: GitHub Issues + maintainer email (see [Support](#support))
+
+### Directory Prompt Examples (Core Use Cases)
+
+Use these prompts to validate core functionality:
+
+1. "Create a reminder called `Submit tax forms` in my `Personal` list due tomorrow at 5 PM."
+2. "Show me all incomplete reminders in the `Work` list as JSON."
+3. "Mark the reminder `Book dentist appointment` as completed in my `Personal` list."
+
 ## Prerequisites
 
 - macOS (for Reminders / EventKit)
@@ -385,4 +401,7 @@ Contributions welcome! Please ensure:
 
 ## Support
 
-For issues, questions, or suggestions, please open an issue on GitHub.
+For issues, questions, or suggestions:
+
+- GitHub Issues: https://github.com/thegeneralist01/reminders-mcp-server/issues
+- Email: thegeneralist01@gmail.com
